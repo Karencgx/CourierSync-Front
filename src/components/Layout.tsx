@@ -42,6 +42,13 @@ const Layout = ({ children }: LayoutProps) => {
                 >
                   Envíos
                 </Button>
+                <Button
+                  variant={isActive("/users") ? "default" : "ghost"}
+                  onClick={() => navigate("/users")}
+                  size="sm"
+                >
+                  Gestión de Usuarios
+                </Button>
               </nav>
             </div>
 
