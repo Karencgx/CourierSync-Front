@@ -10,6 +10,7 @@ const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 🔹 Obtener el usuario guardado en localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const handleLogout = () => {
@@ -26,7 +27,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <h1 className="text-xl font-bold text-primary">CourierSync</h1>
-              
+
               <nav className="flex space-x-4">
                 <Button
                   variant={isActive("/dashboard") ? "default" : "ghost"}
@@ -35,6 +36,7 @@ const Layout = ({ children }: LayoutProps) => {
                 >
                   Dashboard
                 </Button>
+
                 <Button
                   variant={isActive("/shipments") ? "default" : "ghost"}
                   onClick={() => navigate("/shipments")}
@@ -42,13 +44,17 @@ const Layout = ({ children }: LayoutProps) => {
                 >
                   Envíos
                 </Button>
-                <Button
-                  variant={isActive("/users") ? "default" : "ghost"}
-                  onClick={() => navigate("/users")}
-                  size="sm"
-                >
-                  Gestión de Usuarios
-                </Button>
+
+                {/* 🔹 Mostrar solo si el usuario es administrador */}
+                {user.role === "Administrador" && (
+                  <Button
+                    variant={isActive("/users") ? "default" : "ghost"}
+                    onClick={() => navigate("/users")}
+                    size="sm"
+                  >
+                    Gestión de Usuarios
+                  </Button>
+                )}
               </nav>
             </div>
 
@@ -60,6 +66,7 @@ const Layout = ({ children }: LayoutProps) => {
                   {user.role}
                 </Badge>
               </span>
+
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 Cerrar Sesión
               </Button>
