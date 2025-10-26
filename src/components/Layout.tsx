@@ -29,13 +29,13 @@ const Layout = ({ children }: LayoutProps) => {
               <h1 className="text-xl font-bold text-primary">CourierSync</h1>
 
               <nav className="flex space-x-4">
-                <Button
+                {(user.role === "Administrador") && (<Button
                   variant={isActive("/dashboard") ? "default" : "ghost"}
                   onClick={() => navigate("/dashboard")}
                   size="sm"
                 >
                   Dashboard
-                </Button>
+                </Button>)}
 
                 <Button
                   variant={isActive("/shipments") ? "default" : "ghost"}

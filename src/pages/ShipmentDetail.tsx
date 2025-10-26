@@ -13,6 +13,7 @@ import Layout from "@/components/Layout";
 import {Client} from "@/types/api";
 import {Vehicle} from "@/types/api";
 
+const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 
 const ShipmentDetail = () => {
@@ -70,6 +71,8 @@ const ShipmentDetail = () => {
   const handleBack = () => {
     navigate("/shipments");
   };
+  
+  const canUpdateStatus = user.role === "Administrador" || user.role === "Conductor";
 
   const handleUpdateStatus = () => {
     // Check if delivery confirmation is required for "Entregado" status
@@ -215,11 +218,12 @@ const ShipmentDetail = () => {
           {/* Status Update Sidebar */}
           <div className="lg:col-span-1">
             <Card className="shadow-card">
-              <CardHeader>
+              < CardHeader>
                 <CardTitle>Actualizar Estado</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              { canUpdateStatus ? (               
+   <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -230,7 +234,15 @@ const ShipmentDetail = () => {
                     <SelectItem value="Novedad">Novedad</SelectItem>
                   </SelectContent>
                 </Select>
-
+              ) : (  
+                <div className="space-y-2">
+                            <Label className="text-sm font-medium">Estado Actual</Label>
+                            <div className="p-3 bg-muted rounded-md border border-input">
+                                {/* Muestra el estado actual sin permitir la interacción */}
+                                <span className="text-sm font-semibold">{selectedStatus || "Cargando estado..."}</span>
+                            </div>
+                        </div>
+                        )}
                 {/* Delivery confirmation for "Entregado" status */}
                 {selectedStatus === "Entregado" && (
                   <div className="flex items-center space-x-2">
@@ -261,9 +273,10 @@ const ShipmentDetail = () => {
                   </div>
                 )}
                 
-                <Button className="w-full" onClick={handleUpdateStatus}>
+                {(canUpdateStatus) && 
+                (<Button className="w-full" onClick={handleUpdateStatus}>
                   Actualizar Estado
-                </Button>
+                </Button>)}
               </CardContent>
             </Card>
             <Card className="shadow-card">

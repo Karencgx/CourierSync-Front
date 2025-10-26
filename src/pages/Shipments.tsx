@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { CitySelector } from "@/components/CitySelector";
 import Layout from "@/components/Layout";
 
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
 const Shipments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -28,6 +30,7 @@ const Shipments = () => {
     origin: "",
     destination: "",
     weight: "",
+    volume: "",
     priority: "Normal",
   });
 
@@ -36,6 +39,7 @@ const Shipments = () => {
     origin: "",
     destination: "",
     weight: "",
+    volume: "",
     priority: "",
     status: "",
   });
@@ -46,6 +50,7 @@ const Shipments = () => {
       origin: "Medellín",
       destination: "Bogotá",
       weight: "25 kg",
+      volume: "0.5 m³",
       priority: "Alta",
       status: "En tránsito",
       statusColor: "bg-status-transit",
@@ -55,6 +60,7 @@ const Shipments = () => {
       origin: "Medellín",
       destination: "Cali",
       weight: "18 kg",
+      volume: "0.05 m³",
       priority: "Normal",
       status: "Pendiente",
       statusColor: "bg-status-pending",
@@ -64,6 +70,7 @@ const Shipments = () => {
       origin: "Cali",
       destination: "Bogotá",
       weight: "32 kg",
+      volume: "0.2 m³",
       priority: "Normal",
       status: "Entregado",
       statusColor: "bg-status-delivered",
@@ -73,6 +80,7 @@ const Shipments = () => {
       origin: "Medellín",
       destination: "Barranquilla",
       weight: "12 kg",
+      volume: "0.08 m³",
       priority: "Normal",
       status: "Novedad",
       statusColor: "bg-status-novedad",
@@ -85,6 +93,7 @@ const Shipments = () => {
       origin: shipment.origin,
       destination: shipment.destination,
       weight: shipment.weight,
+      volume: shipment.volume,
       priority: shipment.priority,
       status: shipment.status,
     });
@@ -97,6 +106,7 @@ const Shipments = () => {
       origin: "",
       destination: "",
       weight: "",
+      volume: "",
       priority: "Normal",
     });
   };
@@ -107,6 +117,7 @@ const Shipments = () => {
       origin: "",
       destination: "",
       weight: "",
+      volume: "",
       priority: "",
       status: "",
     });
@@ -163,10 +174,10 @@ const Shipments = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Gestión de envíos</h1>
-          <Button onClick={() => setShowCreateModal(true)} className="bg-status-delivered hover:bg-status-delivered/90">
+          {(user.role === "Administrador"|| user.role === "Operador") && (<Button onClick={() => setShowCreateModal(true)} className="bg-status-delivered hover:bg-status-delivered/90">
             <Plus className="w-4 h-4 mr-2" />
             Crear envío
-          </Button>
+          </Button>)}
         </div>
 
         <Card className="shadow-card">
@@ -177,7 +188,7 @@ const Shipments = () => {
                   <TableHead>ID</TableHead>
                   <TableHead>Origen</TableHead>
                   <TableHead>Destino</TableHead>
-                  <TableHead>Peso</TableHead>
+                  <TableHead>Peso y Volumen</TableHead>
                   <TableHead>Prioridad</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -189,7 +200,7 @@ const Shipments = () => {
                     <TableCell className="font-medium">{shipment.id}</TableCell>
                     <TableCell>{shipment.origin}</TableCell>
                     <TableCell>{shipment.destination}</TableCell>
-                    <TableCell>{shipment.weight}</TableCell>
+                    <TableCell>{shipment.weight}/ {shipment.volume}</TableCell>
                     <TableCell>{shipment.priority}</TableCell>
                     <TableCell>
                       <Badge className={`text-white ${shipment.statusColor}`} variant="secondary">
@@ -205,16 +216,18 @@ const Shipments = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button
+                        {(user.role === "Administrador"|| user.role === "Operador") &&
+                        (<Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleEdit(shipment)}
                         >
                           <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="text-destructive" onClick={() => handleDeleteClick(shipment)}>
+                        </Button>)}
+                        {(user.role === "Administrador"|| (user.role === "Operador" && shipment.status === "Pendiente")) &&(<Button size="sm" variant="outline"
+                         className="text-destructive" onClick={() => handleDeleteClick(shipment)}>
                           <Trash2 className="w-4 h-4" />
-                        </Button>
+                        </Button>)}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -276,6 +289,14 @@ const Shipments = () => {
                   value={createForm.weight}
                   onChange={(e) => setCreateForm({ ...createForm, weight: e.target.value })}
                 />
+              </div>
+              <div className="space-y-2"> {/* Segundo div (Volumen) */}
+                  <Label>Volumen</Label>
+                  <Input
+                      placeholder="Volumen en m³"
+                      value={createForm.volume}
+                      onChange={(e) => setCreateForm({ ...createForm, volume: e.target.value })}
+                  />
               </div>
             </div>
             <div className="flex justify-end space-x-2">
@@ -353,14 +374,22 @@ const Shipments = () => {
                   onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
                 />
               </div>
+              <div className="space-y-2"> {/* Segundo div (Volumen) */}
+                <Label>Volumen</Label>
+                <Input
+                    placeholder="Volumen en m³"
+                    value={editForm.volume}
+                    onChange={(e) => setEditForm({ ...editForm, volume: e.target.value })}
+                />
+              </div>
             </div>
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={handleEditModalClose}>
                 Cancelar
               </Button>
-              <Button onClick={handleEditSave}>
+              {user.role === "Administrador"|| user.role === "Operador" &&(<Button onClick={handleEditSave}>
                 Actualizar
-              </Button>
+              </Button>)}
             </div>
           </DialogContent>
         </Dialog>

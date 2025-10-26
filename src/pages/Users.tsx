@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {Edit, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -125,7 +126,7 @@ const Users = () => {
                           size="sm"
                           onClick={() => navigate(`/users/edit/${user.id}`)}
                         >
-                          Editar
+                          <Edit className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outline"
@@ -133,7 +134,7 @@ const Users = () => {
                           className="text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10"
                           onClick={() => handleDeleteClick(user)}
                         >
-                          Eliminar
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>

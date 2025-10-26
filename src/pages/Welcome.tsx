@@ -10,12 +10,17 @@ const Welcome = () => {
 
   useEffect(() => {
     // Redirigir automáticamente al dashboard después de 2 segundos
+    let redirectPath = "/dashboard";
+    if (user.role === "Conductor" || user.role === "Operador") {
+    redirectPath = "/shipments";}
     const timer = setTimeout(() => {
-      navigate("/dashboard");
+      if (user && user.role) {
+        navigate(redirectPath);
+    }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate,user.role]);
 
   return (
     <Layout>
