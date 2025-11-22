@@ -25,6 +25,8 @@ const UserForm = () => {
     role: "",
     password: "",
     confirmPassword: "",
+    vehicleModel: "",
+    vehiclePlate: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +57,8 @@ const UserForm = () => {
       role: "",
       password: "",
       confirmPassword: "",
+      vehicleModel: "",
+      vehiclePlate: "",
     });
   };
 
@@ -145,6 +149,35 @@ const UserForm = () => {
                   />
                 </div>
               </div>
+
+              {formData.role === "Conductor" && (
+                <div className="space-y-4 pt-4 border-t">
+                  <h3 className="text-base font-semibold">Datos de vehículo</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="vehicleModel">Modelo</Label>
+                      <Input
+                        id="vehicleModel"
+                        placeholder="Ingrese el modelo del vehículo"
+                        value={formData.vehicleModel}
+                        onChange={(e) => setFormData({ ...formData, vehicleModel: e.target.value })}
+                        required={formData.role === "Conductor"}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="vehiclePlate">Placa</Label>
+                      <Input
+                        id="vehiclePlate"
+                        placeholder="Ingrese la placa del vehículo"
+                        value={formData.vehiclePlate}
+                        onChange={(e) => setFormData({ ...formData, vehiclePlate: e.target.value })}
+                        required={formData.role === "Conductor"}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={handleReset}>

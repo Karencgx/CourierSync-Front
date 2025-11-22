@@ -25,16 +25,18 @@ const UserEdit = () => {
     phone: "",
     role: "",
     password: "",
+    vehicleModel: "",
+    vehiclePlate: "",
   });
 
   useEffect(() => {
     // Simular carga de datos del usuario
     // En producción, esto vendría de una API
     const mockUsers: Record<string, any> = {
-      "1": { name: "Usuario", email: "usuario@example.com", phone: "123 456 7891", role: "Administrador" },
-      "2": { name: "Usuario 1", email: "usuario1@example.com", phone: "234 567 8912", role: "Conductor" },
-      "3": { name: "Usuario 2", email: "usuario2@example.com", phone: "345 678 9123", role: "Operador" },
-      "4": { name: "Usuario 3", email: "usuario3@example.com", phone: "456 789 1234", role: "Conductor" },
+      "1": { name: "Usuario", email: "usuario@example.com", phone: "123 456 7891", role: "Administrador", vehicleModel: "", vehiclePlate: "" },
+      "2": { name: "Usuario 1", email: "usuario1@example.com", phone: "234 567 8912", role: "Conductor", vehicleModel: "Toyota Hilux", vehiclePlate: "ABC-123" },
+      "3": { name: "Usuario 2", email: "usuario2@example.com", phone: "345 678 9123", role: "Operador", vehicleModel: "", vehiclePlate: "" },
+      "4": { name: "Usuario 3", email: "usuario3@example.com", phone: "456 789 1234", role: "Conductor", vehicleModel: "Chevrolet NPR", vehiclePlate: "XYZ-789" },
     };
 
     if (id && mockUsers[id]) {
@@ -125,6 +127,35 @@ const UserEdit = () => {
                   className="bg-muted"
                 />
               </div>
+
+              {formData.role === "Conductor" && (
+                <div className="space-y-4 pt-4 border-t">
+                  <h3 className="text-base font-semibold">Datos de vehículo</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="vehicleModel">Modelo</Label>
+                      <Input
+                        id="vehicleModel"
+                        placeholder="Ingrese el modelo del vehículo"
+                        value={formData.vehicleModel}
+                        onChange={(e) => setFormData({ ...formData, vehicleModel: e.target.value })}
+                        required={formData.role === "Conductor"}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="vehiclePlate">Placa</Label>
+                      <Input
+                        id="vehiclePlate"
+                        placeholder="Ingrese la placa del vehículo"
+                        value={formData.vehiclePlate}
+                        onChange={(e) => setFormData({ ...formData, vehiclePlate: e.target.value })}
+                        required={formData.role === "Conductor"}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={handleCancel}>
