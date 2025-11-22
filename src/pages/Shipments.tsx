@@ -267,62 +267,65 @@ const Shipments = () => {
           </div>
         </div>
 
-        <Card className="shadow-card">
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Origen</TableHead>
-                  <TableHead>Destino</TableHead>
-                  <TableHead>Peso y Volumen</TableHead>
-                  <TableHead>Prioridad</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {shipments.map((shipment) => (
-                  <TableRow key={shipment.id}>
-                    <TableCell className="font-medium">{shipment.id}</TableCell>
-                    <TableCell>{shipment.origin}</TableCell>
-                    <TableCell>{shipment.destination}</TableCell>
-                    <TableCell>{shipment.weight}/ {shipment.volume}</TableCell>
-                    <TableCell>{shipment.priority}</TableCell>
-                    <TableCell>
-                      <Badge className={`text-white ${shipment.statusColor}`} variant="secondary">
-                        {shipment.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleView(shipment.id)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        {(user.role === "Administrador"|| user.role === "Operador") &&
-                        (<Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(shipment)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>)}
-                        {(user.role === "Administrador"|| (user.role === "Operador" && shipment.status === "Pendiente")) &&(<Button size="sm" variant="outline"
-                         className="text-destructive" onClick={() => handleDeleteClick(shipment)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>)}
-                      </div>
-                    </TableCell>
+        {/* Shipments Table - only show when action log is not active */}
+        {!showActionLog && (
+          <Card className="shadow-card">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Origen</TableHead>
+                    <TableHead>Destino</TableHead>
+                    <TableHead>Peso y Volumen</TableHead>
+                    <TableHead>Prioridad</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Acciones</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {shipments.map((shipment) => (
+                    <TableRow key={shipment.id}>
+                      <TableCell className="font-medium">{shipment.id}</TableCell>
+                      <TableCell>{shipment.origin}</TableCell>
+                      <TableCell>{shipment.destination}</TableCell>
+                      <TableCell>{shipment.weight}/ {shipment.volume}</TableCell>
+                      <TableCell>{shipment.priority}</TableCell>
+                      <TableCell>
+                        <Badge className={`text-white ${shipment.statusColor}`} variant="secondary">
+                          {shipment.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleView(shipment.id)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          {(user.role === "Administrador"|| user.role === "Operador") &&
+                          (<Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEdit(shipment)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>)}
+                          {(user.role === "Administrador"|| (user.role === "Operador" && shipment.status === "Pendiente")) &&(<Button size="sm" variant="outline"
+                           className="text-destructive" onClick={() => handleDeleteClick(shipment)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>)}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Action Log Section */}
         {showActionLog && (
