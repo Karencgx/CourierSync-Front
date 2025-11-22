@@ -32,7 +32,14 @@ const Shipments = () => {
     weight: "",
     volume: "",
     priority: "Normal",
+    driver: "",
   });
+
+  // Mock drivers data - en producción vendría de la API
+  const drivers = [
+    { id: "2", name: "Usuario 1", vehicleModel: "Toyota Hilux", vehiclePlate: "ABC-123" },
+    { id: "4", name: "Usuario 3", vehicleModel: "Chevrolet NPR", vehiclePlate: "XYZ-789" },
+  ];
 
   // Form states for edit modal
   const [editForm, setEditForm] = useState({
@@ -108,6 +115,7 @@ const Shipments = () => {
       weight: "",
       volume: "",
       priority: "Normal",
+      driver: "",
     });
   };
 
@@ -282,7 +290,7 @@ const Shipments = () => {
                   <span className="text-sm text-muted-foreground">Pendiente (predeterminado)</span>
                 </div>
               </div>
-              <div className="col-span-2 space-y-2">
+              <div className="space-y-2">
                 <Label>Peso</Label>
                 <Input
                   placeholder="Peso en kg"
@@ -290,13 +298,31 @@ const Shipments = () => {
                   onChange={(e) => setCreateForm({ ...createForm, weight: e.target.value })}
                 />
               </div>
-              <div className="space-y-2"> {/* Segundo div (Volumen) */}
-                  <Label>Volumen</Label>
-                  <Input
-                      placeholder="Volumen en m³"
-                      value={createForm.volume}
-                      onChange={(e) => setCreateForm({ ...createForm, volume: e.target.value })}
-                  />
+              <div className="space-y-2">
+                <Label>Volumen</Label>
+                <Input
+                  placeholder="Volumen en m³"
+                  value={createForm.volume}
+                  onChange={(e) => setCreateForm({ ...createForm, volume: e.target.value })}
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label>Conductor</Label>
+                <Select
+                  value={createForm.driver}
+                  onValueChange={(value) => setCreateForm({ ...createForm, driver: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccione el conductor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {drivers.map((driver) => (
+                      <SelectItem key={driver.id} value={driver.id}>
+                        {driver.name} - {driver.vehicleModel} ({driver.vehiclePlate})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="flex justify-end space-x-2">
