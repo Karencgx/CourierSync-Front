@@ -24,6 +24,11 @@ const Shipments = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState<any>(null);
   const [shipmentToDelete, setShipmentToDelete] = useState<any>(null);
+  const [showActionLog, setShowActionLog] = useState(false);
+  const [actionLogFilters, setActionLogFilters] = useState({
+    user: "",
+    date: "",
+  });
 
   // Form states for create modal
   const [createForm, setCreateForm] = useState({
@@ -39,6 +44,57 @@ const Shipments = () => {
   const drivers = [
     { id: "2", name: "Usuario 1", vehicleModel: "Toyota Hilux", vehiclePlate: "ABC-123" },
     { id: "4", name: "Usuario 3", vehicleModel: "Chevrolet NPR", vehiclePlate: "XYZ-789" },
+  ];
+
+  // Mock action log data - en producción vendría de la API
+  const actionLogs = [
+    {
+      id: "1",
+      user: "Usuario",
+      dateTime: "2025-11-12\n15:32:20",
+      role: "Conductor",
+      action: "Actualizar Estado",
+      actionColor: "bg-orange-500",
+      shipmentId: "ENV-045",
+      details: "Actualizado de 'En transito' a 'Entregado'",
+    },
+    {
+      id: "2",
+      user: "Usuario 1",
+      dateTime: "2025-11-10\n22:53:13",
+      role: "Administrador",
+      action: "Eliminar",
+      actionColor: "bg-red-500",
+      shipmentId: "ENV-050",
+      details: "Envío eliminado",
+    },
+    {
+      id: "3",
+      user: "Usuario 2",
+      dateTime: "2025-11-10\n09:45:33",
+      role: "Operador",
+      action: "Crear",
+      actionColor: "bg-green-500",
+      shipmentId: "ENV-056",
+      details: "Nuevo envío creado",
+    },
+    {
+      id: "4",
+      user: "Usuario 3",
+      dateTime: "2025-11-9\n12:15:45",
+      role: "Administrador",
+      action: "Editar",
+      actionColor: "bg-blue-500",
+      shipmentId: "ENV-038",
+      details: "Dirección de destino actualizada",
+    },
+  ];
+
+  const users = [
+    { id: "1", name: "Usuario" },
+    { id: "2", name: "Usuario 1" },
+    { id: "3", name: "Usuario 2" },
+    { id: "4", name: "Usuario 3" },
   ];
 
   // Form states for edit modal
@@ -177,15 +233,38 @@ const Shipments = () => {
     handleCreateModalClose();
   };
 
+  const handleClearFilters = () => {
+    setActionLogFilters({ user: "", date: "" });
+  };
+
+  const handleFilter = () => {
+    // Mock filter functionality - in real app would filter the action logs
+    console.log("Filtering with:", actionLogFilters);
+    toast({
+      title: "Filtros aplicados",
+      description: "Los resultados han sido filtrados"
+    });
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Gestión de envíos</h1>
-          {(user.role === "Administrador"|| user.role === "Operador") && (<Button onClick={() => setShowCreateModal(true)} className="bg-status-delivered hover:bg-status-delivered/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Crear envío
-          </Button>)}
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setShowActionLog(!showActionLog)} 
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              Registro de acciones
+            </Button>
+            {(user.role === "Administrador"|| user.role === "Operador") && (
+              <Button onClick={() => setShowCreateModal(true)} className="bg-status-delivered hover:bg-status-delivered/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Crear envío
+              </Button>
+            )}
+          </div>
         </div>
 
         <Card className="shadow-card">
@@ -244,6 +323,92 @@ const Shipments = () => {
             </Table>
           </CardContent>
         </Card>
+
+        {/* Action Log Section */}
+        {showActionLog && (
+          <>
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Filtro de Búsqueda</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-2">
+                    <Label>Usuario</Label>
+                    <Select
+                      value={actionLogFilters.user}
+                      onValueChange={(value) => setActionLogFilters({ ...actionLogFilters, user: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione Usuario" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Fecha</Label>
+                    <Input
+                      type="date"
+                      value={actionLogFilters.date}
+                      onChange={(e) => setActionLogFilters({ ...actionLogFilters, date: e.target.value })}
+                      placeholder="dd/mm/aaaa"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleClearFilters}>
+                    Limpiar Filtros
+                  </Button>
+                  <Button onClick={handleFilter} className="bg-blue-500 hover:bg-blue-600 text-white">
+                    Filtrar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Registro de acciones</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Usuario</TableHead>
+                      <TableHead>Fecha/Hora</TableHead>
+                      <TableHead>Rol</TableHead>
+                      <TableHead>Acción</TableHead>
+                      <TableHead>ID-Envío</TableHead>
+                      <TableHead>Detalles</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {actionLogs.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="font-medium">{log.user}</TableCell>
+                        <TableCell className="whitespace-pre-line text-sm">{log.dateTime}</TableCell>
+                        <TableCell>{log.role}</TableCell>
+                        <TableCell>
+                          <Badge className={`text-white ${log.actionColor}`} variant="secondary">
+                            {log.action}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{log.shipmentId}</TableCell>
+                        <TableCell className="text-sm">{log.details}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </>
+        )}
 
         {/* Create Modal */}
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
